@@ -9,6 +9,7 @@ class Module
 {
     public function init(Manager $moduleManager)
     {
+        $this->initAutoloader();
         $events = StaticEventManager::getInstance();
         $events->attach('EdpUser\Mapper\UserZendDb', 'findByEmail.post', array($this, 'addTwitterToUserModel'));
         $events->attach('EdpUser\Mapper\UserZendDb', 'findByUsername.post', array($this, 'addTwitterToUserModel'));
@@ -17,11 +18,16 @@ class Module
         $events->attach('EdpUser\Form\Register', 'init', array($this, 'addTwitterToUserForm'));
     }
 
-    public function getConfig($env = null)
+    public function initAutoloader()
+    {
+        require __DIR__ . '/autoload_register.php';
+    }
+    
+    public function getConfig()
     {
         return include __DIR__ . '/configs/module.config.php';
     }
-
+    
     public function addTwitterToUserModel($e)
     {
         $row = $e->getParam('row');
