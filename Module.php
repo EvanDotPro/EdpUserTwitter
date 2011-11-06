@@ -17,6 +17,11 @@ class Module
         $events->attach('EdpUser\Form\Register', 'init', array($this, 'addTwitterToUserForm'));
     }
 
+    public function getConfig($env = null)
+    {
+        return include __DIR__ . '/configs/module.config.php';
+    }
+
     public function addTwitterToUserModel($e)
     {
         $row = $e->getParam('row');
