@@ -12,7 +12,8 @@ Requirements
 ------------
 
 * Zend Framework 2
-* [EdpUser](https://github.com/EvanDotPro/EdpUser) (latest master).
+* [EdpUser](https://github.com/EvanDotPro/EdpUser) (latest master **using
+  Zend\Db, not doctrine**).
 
 Installation
 ------------
