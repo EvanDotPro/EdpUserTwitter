@@ -14,13 +14,12 @@ return array(
             'doctrine' => array(
                 'parameters' => array(
                     'config' => array(
-                        'metadata-driver-impl' => array(
-                            'edpusertwitter-annotationdriver' => array(
+                        'metadata_driver_impl' => array(
+                            'edpusertwitter_annotationdriver' => array(
                                 'class'           => 'Doctrine\ORM\Mapping\Driver\AnnotationDriver',
                                 'namespace'       => 'EdpUserTwitter\Model',
                                 'paths'           => array(__DIR__ . '/../src/EdpUserTwitter/Model'),
                                 'cache-class'     => 'Doctrine\Common\Cache\ArrayCache',
-                                'cache-namespace' => 'edpuser_annotation',
                             )
                         )
                     )
