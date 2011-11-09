@@ -19,58 +19,65 @@ Installation
 
 Extend the UserBase entity and add the following:
 
-        <?php
+    <?php
 
-        namespace Application\EdpUser\Model;
+    namespace Application\EdpUser\Model;
 
-        use Doctrine\ORM\Mapping as ORM,
-            EdpUser\ModelBase\UserBase;
+    use Doctrine\ORM\Mapping as ORM,
+        EdpUser\ModelBase\UserBase;
 
+    /**
+     * @ORM\Entity
+     */
+    class User extends UserBase
+    {
         /**
-         * @ORM\Entity
+         * @ORM\OneToOne(targetEntity="EdpUserTwitter\Model\UserTwitter", mappedBy="user")
          */
-        class User extends UserBase
+        private $twitter;
+     
+        /**
+         * Get twitter.
+         *
+         * @return twitter
+         */
+        public function getTwitter()
         {
-            /**
-             * @ORM\OneToOne(targetEntity="EdpUserTwitter\Model\UserTwitter", mappedBy="user")
-             */
-            private $twitter;
-         
-            /**
-             * Get twitter.
-             *
-             * @return twitter
-             */
-            public function getTwitter()
-            {
-                return $this->twitter;
-            }
-         
-            /**
-             * Set twitter.
-             *
-             * @param $twitter the value to be set
-             */
-            public function setTwitter($twitter)
-            {
-                $this->twitter = $twitter;
-                $this->ext('EdpUserTwitter', $twitter);
-                return $this;
-            }
+            return $this->twitter;
         }
+     
+        /**
+         * Set twitter.
+         *
+         * @param $twitter the value to be set
+         */
+        public function setTwitter($twitter)
+        {
+            $this->twitter = $twitter;
+            $this->ext('EdpUserTwitter', $twitter);
+            return $this;
+        }
+    }
 
 
 Also add the following to your Application/configs/module.config.php:
 
-        'doctrine' => array(
-            'parameters' => array(
-                'config' => array(
-                    'metadata_driver_impl' => array(
-                        'edpuser_annotationdriver' => array(
-                            'namespace'       => 'Application\EdpUser\Model',
-                            'paths'           => array(__DIR__ . '/../src/Application/EdpUser/Model'),
+    'edpuser' => array(
+        'user_model_class' => 'Application\EdpUser\Model\User',
+    ),
+    'di' => array(
+        'instance' => array(
+            'doctrine' => array(
+                'parameters' => array(
+                    'config' => array(
+                        'metadata_driver_impl' => array(
+                            'edpuser_annotationdriver' => array(
+                                'namespace'       => 'Application\EdpUser\Model',
+                                'paths'           => array(__DIR__ . '/../src/Application/EdpUser/Model'),
+                            ),
                         ),
                     ),
                 ),
             ),
         ),
+    ),
