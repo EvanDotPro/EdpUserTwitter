@@ -11,6 +11,8 @@ class Module
     {
         $this->initAutoloader();
         $events = StaticEventManager::getInstance();
+        $events->attach('EdpUser\Mapper\UserDoctrine', 'findByEmail.pre', array($this, 'addTwitterToUserModelDoctrine'));
+        $events->attach('EdpUser\Mapper\UserZendDb', 'findByEmail.pre', array($this, 'addTwitterToUserQuery'));
         $events->attach('EdpUser\Mapper\UserZendDb', 'findByEmail.post', array($this, 'addTwitterToUserModel'));
         $events->attach('EdpUser\Mapper\UserZendDb', 'findByUsername.post', array($this, 'addTwitterToUserModel'));
         $events->attach('EdpUser\Mapper\UserZendDb', 'persist.pre', array($this, 'persistTwitterUsername'));
@@ -28,11 +30,29 @@ class Module
         return include __DIR__ . '/configs/module.config.php';
     }
     
+    public function addTwitterToUserModelDoctrine($e)
+    {
+        $qb = $e->getParam('queryBuilder');
+        $qb->select('t')->leftJoin('EdpUserTwitter\Model\UserTwitter', 't', 'ON', 'u.user_id = t.user_id');
+        $array = $qb->getQuery()->getArrayResult();
+        var_dump($array);die();
+    }
+
+    public function addTwitterToUserQuery($e)
+    {
+        $query = $e->getParam('query');
+        $query->joinLeft('user_twitter', 'user.user_id = user_twitter.user_id');
+    }
+
     public function addTwitterToUserModel($e)
     {
         $row = $e->getParam('row');
-        $user = $e->getParam('user');
-        $user->ext('twitter', $row['twitter']);
+        if ($row['twitter']) {
+            $user = $e->getParam('user');
+            $row['user'] = $user;
+            $userTwitter = \EdpUserTwitter\Model\UserTwitter::fromArray($row);
+            $user->ext('twitter', $userTwitter);
+        }
     }
 
     public function addTwitterToUserForm($e)
