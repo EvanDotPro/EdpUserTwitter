@@ -18,8 +18,4 @@ Requirements
 Installation
 ------------
 
-- Clone into your `modules/` directory.
-- Enable in `application.config.php`. Ensure that it is loaded _after_
-  `EdpUser`.
-- Manually add a `twitter` field to your `user` table. Make it VARCHAR(255),
-  default NULL.
+Pending changes...

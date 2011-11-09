@@ -3,30 +3,34 @@
 namespace EdpUserTwitter;
 
 use Zend\Module\Manager,
+    Zend\Loader\AutoloaderFactory,
     Zend\EventManager\StaticEventManager;
 
 class Module
 {
     public function init(Manager $moduleManager)
     {
+        $this->initAutoloader();
         $events = StaticEventManager::getInstance();
-        $events->attach('EdpUser\Mapper\UserZendDb', 'findByEmail.post', array($this, 'addTwitterToUserModel'));
-        $events->attach('EdpUser\Mapper\UserZendDb', 'findByUsername.post', array($this, 'addTwitterToUserModel'));
-        $events->attach('EdpUser\Mapper\UserZendDb', 'persist.pre', array($this, 'persistTwitterUsername'));
-        $events->attach('EdpUser\Service\User', 'createFromForm', array($this, 'addTwitterFromForm'));
         $events->attach('EdpUser\Form\Register', 'init', array($this, 'addTwitterToUserForm'));
+        $events->attach('EdpUser\Service\User', 'createFromForm', array($this, 'addTwitterFromForm'));
+        $events->attach('EdpUser\Mapper\UserDoctrine', 'persist.post', array($this, 'persistUserDoctrine'));
+    }
+
+    protected function initAutoloader()
+    {
+        AutoloaderFactory::factory(array(
+            'Zend\Loader\StandardAutoloader' => array(
+                'namespaces' => array(
+                    __NAMESPACE__ => __DIR__ . '/src/' . __NAMESPACE__,
+                ),
+            ),
+        ));
     }
 
     public function getConfig($env = null)
     {
         return include __DIR__ . '/configs/module.config.php';
-    }
-
-    public function addTwitterToUserModel($e)
-    {
-        $row = $e->getParam('row');
-        $user = $e->getParam('user');
-        $user->ext('twitter', $row['twitter']);
     }
 
     public function addTwitterToUserForm($e)
@@ -47,13 +51,15 @@ class Module
     {
         $form = $e->getParam('form');
         $user = $e->getParam('user');
-        $user->ext('twitter', $form->getValue('twitter'));
+        $userTwitter = new Model\UserTwitter($user->getUserId(), $form->getValue('twitter'));
+        $userTwitter->setUser($user);
+        $user->setTwitter($userTwitter);
     }
-
-    public function persistTwitterUsername($e)
+    
+    public function persistUserDoctrine($e)
     {
-        $data = $e->getParam('data');
         $user = $e->getParam('user');
-        $data['twitter'] = $user->ext('twitter');
+        $em = $e->getParam('em');
+        $em->persist($user->getTwitter());
     }
 }
