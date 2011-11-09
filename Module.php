@@ -15,6 +15,7 @@ class Module
         $events->attach('EdpUser\Form\Register', 'init', array($this, 'addTwitterToUserForm'));
         $events->attach('EdpUser\Service\User', 'createFromForm', array($this, 'addTwitterFromForm'));
         $events->attach('EdpUser\Mapper\UserDoctrine', 'persist.post', array($this, 'persistUserDoctrine'));
+        $events->attach('EdpUser\Mapper\UserDoctrine', 'findByEmail', array($this, 'addTwitterToUser'));
     }
 
     protected function initAutoloader()
@@ -45,6 +46,12 @@ class Module
             'label'      => 'Twitter Username',
             'order'      => 305,
         ));
+    }
+
+    public function addTwitterToUser($e)
+    {
+        $user = $e->getParam('user');
+        $user->ext('EdpUserTwitter', $user->getTwitter());
     }
 
     public function addTwitterFromForm($e)
