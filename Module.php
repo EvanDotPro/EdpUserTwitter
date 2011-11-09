@@ -51,15 +51,16 @@ class Module
     {
         $form = $e->getParam('form');
         $user = $e->getParam('user');
-        $userTwitter = new Model\UserTwitter($user->getUserId(), $form->getValue('twitter'));
-        $userTwitter->setUser($user);
-        $user->setTwitter($userTwitter);
+        $userTwitter = new Model\UserTwitter($user, $form->getValue('twitter'));
+        $user->ext('EdpUserTwitter', $userTwitter); // @TODO: Clean this up
     }
     
     public function persistUserDoctrine($e)
     {
         $user = $e->getParam('user');
         $em = $e->getParam('em');
-        $em->persist($user->getTwitter());
+        $em->flush();// @TODO: Clean this up
+        $user->setTwitter($user->ext('EdpUserTwitter')); // @TODO: Clean this up
+        $em->persist($user->getTwitter()); // @TODO: Clean this up
     }
 }

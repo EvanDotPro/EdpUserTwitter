@@ -11,16 +11,11 @@ use Doctrine\ORM\Mapping as ORM,
 class UserTwitter extends ModelAbstract
 {
     /**
+     * @ORM\Id
      * @ORM\OneToOne(targetEntity="Application\EdpUser\Model\User", inversedBy="twitter")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="user_id")
      */
     private $user;
-
-    /**
-     * @ORM\Id
-     * @ORM\Column(name="user_id", type="integer")
-     */
-    private $userId;
 
     /**
      * @ORM\Column(name="twitter_username", type="string", unique=true)
@@ -30,13 +25,13 @@ class UserTwitter extends ModelAbstract
     /**
      * __construct 
      * 
-     * @param int $userId 
+     * @param mixed $user 
      * @param string $twitterUsername 
      * @return void
      */
-    public function __construct($userId, $twitterUsername)
+    public function __construct($user, $twitterUsername)
     {
-        $this->setUserId($userId);
+        $this->setUser($user);
         $this->setTwitterUsername($twitterUsername);
     }
 
@@ -82,27 +77,6 @@ class UserTwitter extends ModelAbstract
         return $this;
     }
  
-    /**
-     * Get userId.
-     *
-     * @return userId
-     */
-    public function getUserId()
-    {
-        return $this->userId;
-    }
- 
-    /**
-     * Set userId.
-     *
-     * @param $userId the value to be set
-     */
-    public function setUserId($userId)
-    {
-        $this->userId = $userId;
-        return $this;
-    }
-
     public function __toString()
     {
         return $this->twitterUsername;
