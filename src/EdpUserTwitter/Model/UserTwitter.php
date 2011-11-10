@@ -12,7 +12,7 @@ class UserTwitter extends ModelAbstract
 {
     /**
      * @ORM\Id
-     * @ORM\OneToOne(targetEntity="Application\EdpUser\Model\User", inversedBy="twitter")
+     * @ORM\OneToOne(targetEntity="EdpUser\Model\User")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="user_id")
      */
     private $user;

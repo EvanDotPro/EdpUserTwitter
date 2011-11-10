@@ -52,8 +52,10 @@ class Module
     public function addTwitterToUser($e)
     {
         $user = $e->getParam('user');
+        $em = $e->getParam('em');
+        $repo = $em->getRepository('EdpUserTwitter\Model\UserTwitter');
         if (null !== $user) {
-            $user->ext('EdpUserTwitter', $user->getTwitter());
+            $user->ext('EdpUserTwitter', $repo->findOneBy(array('user' => $user->getUserId())));
         }
     }
 
@@ -70,7 +72,6 @@ class Module
         $user = $e->getParam('user');
         $em = $e->getParam('em');
         $em->flush();// @TODO: Clean this up
-        $user->setTwitter($user->ext('EdpUserTwitter')); // @TODO: Clean this up
-        $em->persist($user->getTwitter()); // @TODO: Clean this up
+        $em->persist($user->ext('EdpUserTwitter')); // @TODO: Clean this up
     }
 }
