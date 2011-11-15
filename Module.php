@@ -3,14 +3,13 @@
 namespace EdpUserTwitter;
 
 use Zend\Module\Manager,
-    Zend\Loader\AutoloaderFactory,
+    Zend\Module\Consumer\AutoloaderProvider,
     Zend\EventManager\StaticEventManager;
 
-class Module
+class Module implements AutoloaderProvider
 {
     public function init(Manager $moduleManager)
     {
-        $this->initAutoloader();
         $events = StaticEventManager::getInstance();
         $events->attach('EdpUser\Form\Register', 'init', array($this, 'addTwitterToUserForm'));
         $events->attach('EdpUser\Service\User', 'createFromForm', array($this, 'addTwitterFromForm'));
@@ -19,15 +18,15 @@ class Module
         $events->attach('EdpUser\Mapper\UserDoctrine', 'findByUsername', array($this, 'addTwitterToUser'));
     }
 
-    protected function initAutoloader()
+    public function getAutoloaderConfig()
     {
-        AutoloaderFactory::factory(array(
+        return array(
             'Zend\Loader\StandardAutoloader' => array(
                 'namespaces' => array(
                     __NAMESPACE__ => __DIR__ . '/src/' . __NAMESPACE__,
                 ),
             ),
-        ));
+        );
     }
 
     public function getConfig($env = null)
